@@ -1,14 +1,14 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import mongoose from 'mongoose';
 import app from './app.js';
 import { Server } from 'socket.io';
 
 const PORT = process.env.PORT || 5000;
-// const MONGODB_URI = process.env.MONGODB_URI;
-
-const MONGODB_URI = 'mongodb+srv://govindayadav2478:gCFF1B4CCTljTgL9@cluster0.vsf7qx5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://govindayadav2478:gCFF1B4CCTljTgL9@cluster0.vsf7qx5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 
 let io;
-
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -22,4 +22,4 @@ mongoose.connect(MONGODB_URI, {
   console.error('MongoDB connection error:', err);
 });
 
-export { io }; 
+export { io };
