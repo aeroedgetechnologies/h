@@ -60,12 +60,19 @@ export const adminLogin = async (req, res) => {
   console.log('Admin login attempt:', email);
 
   const admin = await Admin.findOne({ email });
+  console.log('Admin found:', admin ? 'Yes' : 'No');
+  if (admin) {
+    console.log('Admin ID:', admin._id);
+    console.log('Admin role:', admin.role);
+  }
+  
   if (!admin) {
     console.log('Admin not found');
     return res.status(401).json({ message: 'Invalid credentials' });
   }
 
   const valid = await bcrypt.compare(password, admin.password);
+  console.log('Password valid:', valid);
   if (!valid) {
     console.log('Invalid password');
     return res.status(401).json({ message: 'Invalid credentials' });
@@ -74,13 +81,18 @@ export const adminLogin = async (req, res) => {
   const secret = process.env.JWT_SECRET || 'mySuperSecretKey123';
   console.log('Using JWT_SECRET for signing:', secret);
 
+  const tokenPayload = { id: admin._id, email: admin.email, admin: true, role: admin.role };
+  console.log('Token payload:', tokenPayload);
+
   const token = jwt.sign(
-    { id: admin._id, email: admin.email, admin: true, role: admin.role },
+    tokenPayload,
     secret,
     { expiresIn: '7d' }
   );
 
   console.log('Generated token:', token);
+  console.log('Token decoded for verification:', jwt.verify(token, secret));
+  
   res.json({ token, admin: { email: admin.email, role: admin.role } });
 };
 
